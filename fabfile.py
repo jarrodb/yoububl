@@ -12,4 +12,5 @@ def deploy():
     project_dir = '/data/www/yoububl.com'
     with cd(project_dir):
         run("sudo git pull origin master")
+        run("sudo supervisorctl restart yoububl-8000")
 
