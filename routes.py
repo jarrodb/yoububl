@@ -5,6 +5,10 @@ import views
 
 routes = [
     URLSpec(r"/", views.index.IndexHandler, name="index"),
+    URLSpec(
+        r"/comic/([a-zA-Z0-9]+)/",
+        views.index.ComicHandler,
+        name="comic-comic"),
 
     URLSpec(r"/admin/", views.admin.AdminHandler, name="admin"),
     URLSpec(

@@ -5,13 +5,91 @@ Make your own comic!
 
 <p>{{comic.title}}</p>
 <p>
-<img src="{{ comic.file }}">
+<img id="comic" src="{{ comic.file }}" usemap="#captions">
+<map id="captions" name="captions">
+  {% for caption in comic.captions %}
+  <area shape="rect" coords="{{caption['coords']}}" nohref="" alt="{{caption['title']}}">
+  {% end %}
+</map>
 </p>
+
+{% for caption in comic.captions %}
+<div id="{{caption['title']}}" style="word-wrap: break-word; position: absolute; display: none;">
+<textarea id="{{caption['title']}}ta"></textarea>
+<span id="{{caption['title']}}txt" style="display: none"></span>
+</div>
+{% end %}
+
 <div id="comic-form">
-    <form id="comic-form" action="" method="post">
+    <form id="comic-form" action="{{reverse_url('comic-comic', comic._id)}}" method="post">
         {% raw xsrf_form_html() %}
         <input type="submit" value="Add Comic">
     </form>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('area').click(function() {
+            // refactor this ugliness lol
+            var idtag = $(this).attr('alt');
+            var cap = $("#"+idtag);
+            var capta = $("#"+idtag+"ta");
+            var captxt = $("#"+idtag+"txt");
+            var coords = $(this).attr('coords');
+            var realx1 = getRelativeLeft(coords);
+            var realy1 = getRelativeTop(coords);
+            var taheight = getHeight(coords);
+            var tawidth = getWidth(coords);
+
+            // set properties from above calculations and display
+            capta.css({
+                "left":realx1+"px",
+                "top":realy1+"px",
+                "height":taheight+"px",
+                "width":tawidth+"px"
+                });
+            cap.css({
+                "left":realx1+"px",
+                "top":realy1+"px",
+                "height":taheight+"px",
+                "width":tawidth+"px",
+                }).show();
+            capta.focus();
+
+            function leftta() {
+                var text = capta.val();
+                if (text != "") {
+                    captxt.text(text);
+                    captxt.show();
+                }
+                capta.hide();
+            }
+            // more events for handling input
+            capta.keydown(function (e) {
+                if (e.keyCode == 13) {
+                    // Enter pressed
+                    leftta();
+                }
+            });
+            capta.focusout(function() {
+                // focus left the text area
+                leftta();
+            });
+
+            return false;
+        });
+        $(":submit").click(function() {
+            // debug stuff
+            var s = "";
+            {% for caption in comic.captions %}
+                var cap = $('#{{caption['title']}}ta').val();
+                s += "{{caption['title']}}: "+cap+"\n";
+            {% end %}
+            alert(s);
+            //return false;
+        });
+    });
+</script>
+
 
 {% end %}

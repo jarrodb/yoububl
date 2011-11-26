@@ -4,7 +4,7 @@ Welcome to the admin page:
 
 <p>This Comic: {{comic.title}}</p>
 <p>
-<img id="comic" src="{{ comic.file }}" usemaps="#captions">
+<img id="comic" src="{{ comic.file }}" usemap="#captions">
 
 {% if comic.captions %}
 <map name="captions">
@@ -43,9 +43,10 @@ Welcome to the admin page:
         rdiv.draggable().resizable();
         var comic = $('#comic');
         var coff = comic.offset();
+        //alert('left: '+coff.left+' '+coff.top);
         rdiv.css({
             "left":parseInt(coff.left)+20+"px",
-            "top":parseInt(coff.top)+20+"px",
+            "top":parseInt(coff.top)+100+"px",
             });
         storedmaps();
     });
@@ -74,7 +75,7 @@ Welcome to the admin page:
             // Caption exists on the server, send a delete
             $('<input>').attr({
                 type: 'hidden',
-                name: 'delcaption',
+                name: 'delcaption_'+title,
                 value: title
             }).appendTo('#comic-form');
         }
@@ -83,6 +84,7 @@ Welcome to the admin page:
     }
 
     function displayCaptionMap(title, coords) {
+        //alert('left: '+getRelativeLeft(coords)+' top: '+getRelativeTop(coords)+' height: '+getHeight(coords)+' width: '+getWidth(coords));
         var newdiv = [
             '<div id="map_'+title+'"',
             '    style="top: '+getRelativeTop(coords)+'px;',
@@ -105,30 +107,6 @@ Welcome to the admin page:
             $('#showmaps').append(showdiv);
     }
 
-    function getHeight(coords) {
-        var c = coords.split(',');
-        return parseInt(c[2]) - parseInt(c[0]);
-    }
-
-    function getWidth(coords) {
-        var c = coords.split(',');
-        return parseInt(c[3]) - parseInt(c[1]);
-    }
-
-    function getRelativeTop(coords) {
-        var c = coords.split(',');
-        var comic = $('#comic');
-        var cpos = comic.offset();
-        return cpos.top + parseInt(c[0])
-    }
-
-    function getRelativeLeft(coords) {
-        var c = coords.split(',');
-        var comic = $('#comic');
-        var cpos = comic.offset();
-        return cpos.left + parseInt(c[1])
-    }
-
     function showmap() {
         var rdiv = $('#resizeDiv');
         $('input[name$="captitle"]').val("c"+cnum)
@@ -140,13 +118,13 @@ Welcome to the admin page:
         var rdiv = $('#resizeDiv');
         var cpos = comic.offset();
         var posi = rdiv.position();
-        var t = posi.top - cpos.top
-        var l = posi.left - cpos.left
-        var b = t + rdiv.height();
-        var r = l + rdiv.width();
+        var x1 = posi.left - cpos.left;
+        var y1 = posi.top - cpos.top;
+        var x2 = x1 + rdiv.width();
+        var y2 = y1 + rdiv.height();
         rdiv.hide();
         resetDiv();
-        var newmap = t+','+l+','+b+','+r;
+        var newmap = x1+','+y1+','+x2+','+y2;
         var ctitle = $('input[name$="captitle"]').val();
         $('<input>').attr({
             type: 'hidden',
@@ -155,10 +133,6 @@ Welcome to the admin page:
         }).appendTo('#comic-form');
         displayCaptionMap(ctitle, newmap)
         cnum += 1;
-    }
-
-    function transparentmap(area) {
-
     }
 
     function displaymap(area) {

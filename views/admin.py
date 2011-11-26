@@ -75,22 +75,27 @@ class ComicHandler(BaseHandler):
 
         captions = []
         changed = False
+
+        # process deletes FIRST
         for k in self.request.arguments:
-            # process deletes FIRST
-            if k == 'delcaption':
+            if k.startswith('delcaption_'):
                 index = 0
                 for cc in comic.captions:
                     if cc.get('title') == self.get_argument(k):
                         del comic.captions[index]
                         changed = True
                     index += 1
-            elif k.startswith('caption_'):
+
+        # process additions
+        for k in self.request.arguments:
+            if k.startswith('caption_'):
                 ckey = k.replace('caption_','')
                 newc = self.conn.Caption()
                 newc.title = unicode(ckey)
                 newc.coords = self.get_argument(k)
                 newc.save()
                 captions.append(newc)
+
         if captions:
             comic.captions.extend(captions)
             comic.enabled = True
