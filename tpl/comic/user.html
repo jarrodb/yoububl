@@ -1,0 +1,50 @@
+{% extends "../base/base.tpl" %}
+{% block content %}
+
+Make your own comic!
+
+<p>{{comic.comic.title}}</p>
+<p>
+<img id="comic" src="{{ comic.comic.file }}">
+</p>
+
+{% for caption in comic.comic.captions %}
+<div id="{{caption['title']}}" style="word-wrap: break-word; position: absolute; display: none;">
+<span id="{{caption['title']}}txt"></span>
+</div>
+{% end %}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var usercaptions = {
+        {% for c in comic.captions %}
+            "{{c['title']}}":"{{c['text']}}",
+        {% end %}
+        }
+
+        var captions = {
+        {% for caption in comic.comic.captions %}
+            "{{caption['title']}}":"{{caption['coords']}}",
+        {% end %}
+        }
+        for (var title in captions) {
+            var cap = $('#'+title);
+            var captxt = $('#'+title+'txt');
+            var coords = captions[title];
+            var realx1 = getRelativeLeft(coords);
+            var realy1 = getRelativeTop(coords);
+            var taheight = getHeight(coords);
+            var tawidth = getWidth(coords);
+            cap.css({
+                "left":getRelativeLeft(coords)+"px",
+                "top":getRelativeTop(coords)+"px",
+                "height":getHeight(coords)+"px",
+                "width":getWidth(coords)+"px",
+                }).show();
+            captxt.text(usercaptions[title]);
+        }
+    });
+</script>
+
+
+{% end %}

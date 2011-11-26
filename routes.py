@@ -10,6 +10,11 @@ routes = [
         views.index.ComicHandler,
         name="comic-comic"),
 
+    URLSpec(
+        r"/c/([a-zA-Z0-9]+)/",
+        views.comic.UserComicHandler,
+        name="comic-user"),
+
     URLSpec(r"/admin/", views.admin.AdminHandler, name="admin"),
     URLSpec(
         r"/admin/comic/([a-zA-Z0-9]+)/",

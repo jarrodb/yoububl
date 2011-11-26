@@ -18,7 +18,7 @@ class Caption(Document):
         'coords': lambda x: len(x.split(',')) == 4,
     }
 
-    default_Values = {
+    default_values = {
         'shape': u'rect',
     }
 
@@ -81,13 +81,32 @@ class Vote(Document):
 
 
 class UserCaption(Document):
+    __database__ = 'yoububl'
+    __collection__ = 'comic'
+
+    structure = {
+        'title': unicode,
+        'text': unicode,
+    }
+
+    use_dot_notation = True
+    use_autorefs = True
+
+
+class UserComic(Document):
+    __database__ = 'yoububl'
+    __collection__ = 'comic'
+
     structure = {
         'comic': Comic,
         'votes': [Vote],
+        'captions': [UserCaption],
         'flagged': bool,
+        'create_date': datetime.datetime,
     }
 
     default_values = {
+        'create_date': datetime.datetime.utcnow,
         'flagged': False,
     }
 
@@ -95,5 +114,6 @@ class UserCaption(Document):
     use_autorefs = True
 
     indexes = [
+        {'fields': ['comic','create_date']},
     ]
 

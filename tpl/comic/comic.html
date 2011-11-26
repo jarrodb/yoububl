@@ -20,7 +20,7 @@ Make your own comic!
 </div>
 {% end %}
 
-<div id="comic-form">
+<div>
     <form id="comic-form" action="{{reverse_url('comic-comic', comic._id)}}" method="post">
         {% raw xsrf_form_html() %}
         <input type="submit" value="Add Comic">
@@ -61,9 +61,26 @@ Make your own comic!
                 if (text != "") {
                     captxt.text(text);
                     captxt.show();
+                    addCaption(idtag, text);
                 }
                 capta.hide();
             }
+            function addCaption(title, text) {
+                //$('element').length == 0;
+                var i = $('input[name$="caption_'+title+'"]');
+                if (i.length == 0) {
+                    // doesn't exist, add it
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'caption_'+title,
+                        value: text
+                    }).appendTo('#comic-form');
+                } else {
+                    // update existing (this doesnt exist yet)
+                    i.attr('value', text);
+                }
+            }
+
             // more events for handling input
             capta.keydown(function (e) {
                 if (e.keyCode == 13) {
@@ -85,7 +102,6 @@ Make your own comic!
                 var cap = $('#{{caption['title']}}ta').val();
                 s += "{{caption['title']}}: "+cap+"\n";
             {% end %}
-            alert(s);
             //return false;
         });
     });
