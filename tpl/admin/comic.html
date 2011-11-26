@@ -1,0 +1,84 @@
+{% extends "../base/base.tpl" %}
+{% block content %}
+Welcome to the admin page:
+
+<p>This Comic: {{comic.title}}</p>
+<p>
+<img id="comic" src="{{ comic.file }}">
+</p>
+<div style="display: none; position: absolute; background-color:#065743; height: 100px; width: 100px; " id="resizeDiv">
+    <input name="captitle" type="text" size="10">
+    <input type="button" value="done" onclick="addmap();">
+</div>
+
+<div id="controls">
+    <input type="button" value="add a new map" onclick="showmap();">
+</div>
+
+<div id="showmaps">
+</div>
+
+<div>
+    <form id="comic-form" action="{{reverse_url('admin-comic', comic._id)}}" method="post">
+        {% raw xsrf_form_html() %}
+        <input type="submit" value="Finalize Comic">
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var rdiv = $('#resizeDiv');
+        rdiv.draggable().resizable();
+        var comic = $('#comic');
+        var coff = comic.offset();
+        rdiv.css({
+            "left":parseInt(coff.left)+20+"px",
+            "top":parseInt(coff.top)+20+"px",
+            });
+    });
+
+    function showmap() {
+        var rdiv = $('#resizeDiv');
+        rdiv.show();
+    }
+
+    function addmap() {
+        var comic = $('#comic');
+        var rdiv = $('#resizeDiv');
+        var cpos = comic.offset();
+        var posi = rdiv.position();
+        var t = posi.top - cpos.top
+        var l = posi.left - cpos.left
+        var b = t + rdiv.height();
+        var r = l + rdiv.width();
+        rdiv.hide();
+        resetDiv();
+        var newmap = t+','+l+','+b+','+r;
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'caption_'+$('input[name$="captitle"]').val(),
+            value: newmap
+        }).appendTo('#comic-form');
+        displaymap(newmap);
+        alert(newmap);
+    }
+
+    function displaymap(area) {
+        $('#showmaps').append('<p>'+area+'</p>');
+    }
+
+    function resetDiv() {
+        var comic = $('#comic');
+        var rdiv = $('#resizeDiv');
+        var coff = comic.offset();
+        rdiv.css({
+            "left":parseInt(coff.left)+20+"px",
+            "top":parseInt(coff.top)+20+"px",
+            "height":"100px",
+            "width":"100px",
+            });
+    }
+</script>
+
+
+{% end %}

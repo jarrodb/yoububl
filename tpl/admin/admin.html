@@ -1,0 +1,25 @@
+{% extends "../base/base.tpl" %}
+{% block content %}
+Welcome to the admin page:
+
+{% if error %}
+    {{error}}<br>
+{% end %}
+<div id="comic-form">
+    <form action="{{reverse_url('admin')}}"
+        enctype="multipart/form-data"
+        method="post">
+        {% raw xsrf_form_html() %}
+        <p>{% raw comic_form.title %}</p>
+        {% if comic_form.title.errors %}
+            <p>{% raw comic_form.title.errors %}</p>
+        {% end %}
+        <p>{% raw comic_form.comic %}</p>
+        {% if comic_form.comic.errors %}
+            <p>{% raw ''.join(comic_form.comic.errors) %}</p>
+        {% end %}
+        <input type="submit" value="Add Comic">
+    </form>
+</div>
+
+{% end %}

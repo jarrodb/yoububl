@@ -1,0 +1,17 @@
+{% extends "../base/base.tpl" %}
+{% block content %}
+
+Make your own comic!
+
+<p>{{comic.title}}</p>
+<p>
+<img src="{{ comic.file }}">
+</p>
+<div id="comic-form">
+    <form id="comic-form" action="" method="post">
+        {% raw xsrf_form_html() %}
+        <input type="submit" value="Add Comic">
+    </form>
+</div>
+
+{% end %}
