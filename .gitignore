@@ -14,6 +14,7 @@
 #._*
 settings_local.py
 *.db
+static/images/*
 #
 # vim temp files
 *.swp
