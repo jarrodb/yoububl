@@ -5,7 +5,13 @@ COMIC_TPL = 'comic/comic.html'
 
 class IndexHandler(BaseHandler):
     def get(self):
-        self.render("index.html")
+        # display recent 10
+        recent = self.conn.UserComic.fetch().sort('create_date', -1).limit(10)
+        available = self.conn.Comic.fetch().sort('create_date', -1).limit(10)
+        self.render("index.html", **{
+            'recent': recent,
+            'available': available,
+            })
 
 class ComicHandler(BaseHandler):
     def get(self, cid):

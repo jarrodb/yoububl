@@ -1,7 +1,7 @@
 import datetime
 import re
 from mongokit import Document
-
+from settings import settings
 
 class Caption(Document):
     __database__ = 'yoububl'
@@ -55,6 +55,9 @@ class Comic(Document):
     indexes = [
         {'fields': ['title']},
     ]
+
+    def get_absolute_url(self):
+        return '%s/comic/%s/' % (settings.site_url, unicode(self._id))
 
 
 ipaddr_re = re.compile('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
@@ -117,3 +120,5 @@ class UserComic(Document):
         {'fields': ['comic','create_date']},
     ]
 
+    def get_absolute_url(self):
+        return '%s/c/%s/' % (settings.site_url, unicode(self._id))

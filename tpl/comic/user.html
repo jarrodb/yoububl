@@ -1,9 +1,8 @@
 {% extends "../base/base.tpl" %}
 {% block content %}
 
-Make your own comic!
-
-<p>{{comic.comic.title}}</p>
+<p>Comic Title: {{comic.comic.title}}</p>
+<p>Create Date: {{comic.create_date}}</p>
 <p>
 <img id="comic" src="{{ comic.comic.file }}">
 </p>

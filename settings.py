@@ -12,6 +12,7 @@ settings_ = dict(
     static_path = path.join(path.dirname(__file__), "static"),
     template_path = path.join(path.dirname(__file__), "tpl"),
 
+    site_url = 'http://yoububl.com:81',
     login_url = '/login',
     )
 

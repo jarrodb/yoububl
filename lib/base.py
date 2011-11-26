@@ -6,18 +6,6 @@ class BaseHandler(tornado.web.RequestHandler):
         super(BaseHandler,self).__init__(*args, **kwargs)
         self.conn = self.application.settings.get('connection')
 
-    def render_string(self, template, **kwa):
-        if not hasattr(self.application, '_event'):
-            self.application._event = None
-            ""  # GET EVENT DATA AND MAKE A MODEL
-
-        kwa.setdefault('_event', self.application._event)
-        return tornado.web.RequestHandler.render_string(
-            self,
-            template,
-            **kwa
-        )
-
     def clear_current_user(self):
         self.set_secure_cookie(
             'authed_user',
