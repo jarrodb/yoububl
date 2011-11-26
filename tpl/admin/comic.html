@@ -4,11 +4,21 @@ Welcome to the admin page:
 
 <p>This Comic: {{comic.title}}</p>
 <p>
-<img id="comic" src="{{ comic.file }}">
+<img id="comic" src="{{ comic.file }}" usemaps="#captions">
+
+{% if comic.captions %}
+<map name="captions">
+    {% for c in comic.captions %}
+    <area shape="rect" coords="{{c['coords']}}" nohref="" alt="{{c['title']}}">
+    {% end %}
+</map>
+{% end %}
 </p>
+
 <div style="display: none; position: absolute; background-color:#065743; height: 100px; width: 100px; " id="resizeDiv">
     <input name="captitle" type="text" size="10">
     <input type="button" value="done" onclick="addmap();">
+    <input type="button" value="cancel" onclick="resetDiv();">
 </div>
 
 <div id="controls">
@@ -26,6 +36,8 @@ Welcome to the admin page:
 </div>
 
 <script type="text/javascript">
+    var cnum = 1; // used for auto caption titles
+
     $(document).ready(function() {
         var rdiv = $('#resizeDiv');
         rdiv.draggable().resizable();
@@ -35,10 +47,91 @@ Welcome to the admin page:
             "left":parseInt(coff.left)+20+"px",
             "top":parseInt(coff.top)+20+"px",
             });
+        storedmaps();
     });
+
+    function storedmaps() {
+        var captions = {
+        {% for c in comic.captions %}
+            "{{c['title']}}":"{{c['coords']}}",
+        {% end %}
+        }
+        for (var title in captions) {
+            displayCaptionMap(title, captions[title]);
+        }
+    }
+
+
+    function deletemap(title) {
+        var mapdiv = $('#map_'+title);
+        var showdiv = $('#show_'+title);
+
+        var existingc = $('input[name$="caption_'+title+'"]');
+        if (existingc.val() != undefined) {
+            // You added one and deleted it
+            existingc.remove()
+        } else {
+            // Caption exists on the server, send a delete
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'delcaption',
+                value: title
+            }).appendTo('#comic-form');
+        }
+        mapdiv.remove();
+        showdiv.remove();
+    }
+
+    function displayCaptionMap(title, coords) {
+        var newdiv = [
+            '<div id="map_'+title+'"',
+            '    style="top: '+getRelativeTop(coords)+'px;',
+            '    left: '+getRelativeLeft(coords)+'px;',
+            '    height: '+getHeight(coords)+'px; ',
+            '    width: '+getWidth(coords)+'px; ',
+            '    background-color: #c0c0c0; ',
+            '    position: absolute; "> ',
+            ' '+title+'',
+            ' <input type="button" value="delete map" ',
+            '        onclick="deletemap(\''+title+'\');">',
+            '</div>'
+            ].join(' ');
+        var showdiv = [
+            '<div id="show_'+title+'">',
+            'title: '+title+' - coords: '+coords,
+            '</div>',
+            ].join(' ');
+            $('#showmaps').append(newdiv);
+            $('#showmaps').append(showdiv);
+    }
+
+    function getHeight(coords) {
+        var c = coords.split(',');
+        return parseInt(c[2]) - parseInt(c[0]);
+    }
+
+    function getWidth(coords) {
+        var c = coords.split(',');
+        return parseInt(c[3]) - parseInt(c[1]);
+    }
+
+    function getRelativeTop(coords) {
+        var c = coords.split(',');
+        var comic = $('#comic');
+        var cpos = comic.offset();
+        return cpos.top + parseInt(c[0])
+    }
+
+    function getRelativeLeft(coords) {
+        var c = coords.split(',');
+        var comic = $('#comic');
+        var cpos = comic.offset();
+        return cpos.left + parseInt(c[1])
+    }
 
     function showmap() {
         var rdiv = $('#resizeDiv');
+        $('input[name$="captitle"]').val("c"+cnum)
         rdiv.show();
     }
 
@@ -54,12 +147,18 @@ Welcome to the admin page:
         rdiv.hide();
         resetDiv();
         var newmap = t+','+l+','+b+','+r;
+        var ctitle = $('input[name$="captitle"]').val();
         $('<input>').attr({
             type: 'hidden',
-            name: 'caption_'+$('input[name$="captitle"]').val(),
+            name: 'caption_'+ctitle,
             value: newmap
         }).appendTo('#comic-form');
-        displaymap(newmap);
+        displayCaptionMap(ctitle, newmap)
+        cnum += 1;
+    }
+
+    function transparentmap(area) {
+
     }
 
     function displaymap(area) {
@@ -76,6 +175,7 @@ Welcome to the admin page:
             "height":"100px",
             "width":"100px",
             });
+        rdiv.hide();
     }
 </script>
 

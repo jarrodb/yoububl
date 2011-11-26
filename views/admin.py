@@ -73,13 +73,31 @@ class ComicHandler(BaseHandler):
         oid = ObjectId(cid)
         comic = self.conn.Comic.one({'_id': oid})
 
-        areamaps = {}
+        captions = []
+        changed = False
         for k in self.request.arguments:
-            if k.startswith('caption_'):
-                areamaps[k] = self.get_argument(k)
+            # process deletes FIRST
+            if k == 'delcaption':
+                index = 0
+                for cc in comic.captions:
+                    if cc.get('title') == self.get_argument(k):
+                        del comic.captions[index]
+                        changed = True
+                    index += 1
+            elif k.startswith('caption_'):
+                ckey = k.replace('caption_','')
+                newc = self.conn.Caption()
+                newc.title = unicode(ckey)
+                newc.coords = self.get_argument(k)
+                newc.save()
+                captions.append(newc)
+        if captions:
+            comic.captions.extend(captions)
+            comic.enabled = True
+            comic.save()
+        elif changed:
+            comic.save()
 
-        s = ''
-        for k in areamaps:
-            s += '%s: %s    <br>    ' % (k, areamaps[k])
-        self.write('areamaps: '+s)
-        self.finish()
+        self.redirect(self.reverse_url('admin-comic',unicode(comic._id)))
+
+
