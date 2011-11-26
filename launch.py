@@ -7,11 +7,16 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-from lib import dependencies
+from mongokit import Connection
 
+from lib import dependencies
+from models import register_models
 from routes import routes
 
 def start_instance(settings):
+    settings.connection = Connection()
+    settings.connection.register(register_models)
+
     app = tornado.web.Application(routes, **settings)
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(settings.instance_port, address='127.0.0.1')
