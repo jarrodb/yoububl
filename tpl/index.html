@@ -5,13 +5,13 @@ Hello, YouBUBL
 <p>Make your own BUBLs!</p>
 <br/>
 {% for a in available %}
-<a href="{{a.get_absolute_url()}}">{{a.get_absolute_url()}}</a><br>
+<a href="{{a.get_absolute_url()}}">{{a.title}}</a><br>
 {% end %}
 
 <br/><br/>
-<p>Recent BUBLs!</p>
+<p>Recent 10 user BUBLs!</p>
 {% for r in recent %}
-<a href="{{r.get_absolute_url()}}">{{r.get_absolute_url()}}</a><br>
+<a href="{{r.get_absolute_url()}}">{{r.comic.title}}</a><br>
 {% end %}
 <br/><br/>
 
