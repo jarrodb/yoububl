@@ -2,5 +2,6 @@ from lib.base import BaseHandler
 
 class IndexHandler(BaseHandler):
     def get(self):
-        self.render("index.html")
+        a = self.conn.Comic.find_one()
+        self.render("index.html", comic=a)
 
