@@ -2,6 +2,10 @@ import json
 import tornado.web
 
 class BaseHandler(tornado.web.RequestHandler):
+    def __init__(self, *args, **kwargs):
+        super(BaseHandler,self).__init__(*args, **kwargs)
+        self.conn = self.application.settings.get('connection')
+
     def render_string(self, template, **kwa):
         if not hasattr(self.application, '_event'):
             self.application._event = None
@@ -36,19 +40,19 @@ class BaseHandler(tornado.web.RequestHandler):
         except:
             return None
 
-    def _handle_request_exception(self, e):
-        tornado.web.RequestHandler._handle_request_exception(self,e)
-        if self.application.settings.get('debug_pdb'):
-            import pdb
-            pdb.post_mortem()
+#    def _handle_request_exception(self, e):
+#        tornado.web.RequestHandler._handle_request_exception(self,e)
+#        if self.application.settings.get('debug_pdb'):
+#            import pdb
+#            pdb.post_mortem()
 
-    def oops(self, msg):
-        self.render('oops.html', oopsmsg=msg)
+#    def oops(self, msg):
+#        self.render('oops.html', oopsmsg=msg)
 
-    def get_error_html(self, status_code, **kwargs):
-        return self.oops(
-            "Something bad has happened. Perhaps refreshing will fix it?",
-            )
+#    def get_error_html(self, status_code, **kwargs):
+#        return self.oops(
+#            "Something bad has happened. Perhaps refreshing will fix it?",
+#            )
 
 
 
