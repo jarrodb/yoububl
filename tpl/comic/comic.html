@@ -16,7 +16,7 @@ Make your own comic!
 {% for caption in comic.captions %}
 <div id="{{caption['title']}}" style="word-wrap: break-word; position: absolute; display: none;">
 <textarea id="{{caption['title']}}ta"></textarea>
-<span id="{{caption['title']}}txt" style="display: none"></span>
+<span id="{{caption['title']}}txt" style="display: none;"></span>
 </div>
 {% end %}
 
@@ -42,18 +42,14 @@ Make your own comic!
             var tawidth = getWidth(coords);
 
             // set properties from above calculations and display
-            capta.css({
+            var cssprop = {
                 "left":realx1+"px",
                 "top":realy1+"px",
                 "height":taheight+"px",
                 "width":tawidth+"px"
-                });
-            cap.css({
-                "left":realx1+"px",
-                "top":realy1+"px",
-                "height":taheight+"px",
-                "width":tawidth+"px",
-                }).show();
+                };
+            capta.css(cssprop);
+            cap.css(cssprop).show();
             capta.focus();
 
             function leftta() {
@@ -62,6 +58,13 @@ Make your own comic!
                     captxt.text(text);
                     captxt.show();
                     addCaption(idtag, text);
+
+                    // ghetto way is unbinding first
+                    captxt.unbind('click');
+                    captxt.click(function() {
+                        capta.show();
+                        captxt.hide();
+                    });
                 }
                 capta.hide();
             }
@@ -76,7 +79,6 @@ Make your own comic!
                         value: text
                     }).appendTo('#comic-form');
                 } else {
-                    // update existing (this doesnt exist yet)
                     i.attr('value', text);
                 }
             }
@@ -94,15 +96,6 @@ Make your own comic!
             });
 
             return false;
-        });
-        $(":submit").click(function() {
-            // debug stuff
-            var s = "";
-            {% for caption in comic.captions %}
-                var cap = $('#{{caption['title']}}ta').val();
-                s += "{{caption['title']}}: "+cap+"\n";
-            {% end %}
-            //return false;
         });
     });
 </script>
