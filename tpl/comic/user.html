@@ -8,7 +8,7 @@
 </p>
 
 {% for caption in comic.comic.captions %}
-<div id="{{caption['title']}}" style="word-wrap: break-word; position: absolute; display: none;">
+<div id="{{caption['title']}}" class="comic-text">
 <span id="{{caption['title']}}txt"></span>
 </div>
 {% end %}

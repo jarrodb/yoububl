@@ -59,12 +59,14 @@ Make your own comic!
                     captxt.show();
                     addCaption(idtag, text);
 
-                    // ghetto way is unbinding first
-                    captxt.unbind('click');
                     captxt.click(function() {
                         capta.show();
                         captxt.hide();
                     });
+                } else {
+                    // its empty, remove it
+                    // later delete the hidden if exists
+                    cap.hide();
                 }
                 capta.hide();
             }
